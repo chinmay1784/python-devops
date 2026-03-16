@@ -1,0 +1,42 @@
+name: Python Windows CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # STAGE 1: Continuous Integration (CI)
+  test-and-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run Tests
+        run: pytest
+
+  # STAGE 2: Deploy to Development (Triggered on Pull Requests)
+  deploy-dev:
+    needs: test-and-build
+    if: github.event_name == 'pull_request'
+    runs-on: windows-latest
+    environment: development
+    steps:
+      - name: Deploy to Dev
+        run: echo "Deploying to Windows Development Server..."
+
+  # STAGE 3: Deploy to Production (Triggered on Merge to Main)
+  deploy-prod:
+    needs: test-and-build
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    environment: production
+    steps:
+      - name: Deploy to Prod
+        run: echo "Deploying to Windows Production Server..."
