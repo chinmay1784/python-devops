@@ -1,5 +1,5 @@
 def msg():
-    print "Hello there sdsdsdsd"
+    print "Say Hello"
     return "Hello World from CI/CD!"
 
 if __name__ == "__main__":
